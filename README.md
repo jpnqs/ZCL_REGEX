@@ -45,12 +45,34 @@ zcl_regex=>matches( iv_val:string, iv_regex:string ) : rt_matches:match_result_t
 
 ## ZCL_REGEX=>MATCHES_AS_STRING
 Methode welche die gefunden Strings als Tabelle zurückgibt.
+### Signatur
 ```abap
 zcl_regex=>matches_as_string( iv_val:string, iv_regex:string ) : rt_strings:stringtab
+```
+### Beispiel
+```abap
+DATA(lt_matches) = zcl_regex=>matches_as_string( iv_val   = 'Hallo Welt!'
+                                                 iv_regex = '/Welt/gi' ).
+```
+Ergebnis:
+```json
+["Welt"]
 ```
 
 ## ZCL_REGEX=>SPLIT
 Methode, welche einen String an einem Regex splittet.
+### Signatur
 ```abap
 zcl_regex=>split( iv_val:string, iv_regex:string ) : rt_split:stringtab
 ```
+
+### Beispiel
+```abap
+DATA(lt_split) = zcl_regex=>split( iv_val   = 'Hallo/B/Welt!'
+                                   iv_regex = '/\/B\//gi' ).
+```
+Ergebnis:
+```json
+["Hallo", "Welt!"]
+```
+Wenn als Modifier kein g (global) mitgegeben wird, dann wird der String nur am ersten auftreten des Regex gesplittet.
