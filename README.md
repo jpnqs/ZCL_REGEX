@@ -1,5 +1,5 @@
 # ZCL_REGEX
-ABAP-Klasse zur objektorientierten Kapselung für Reguläre Ausdrücke.
+ABAP-Klasse zur objektorientierten Kapselung von Regulären Ausdrücken.
 
 ## Aufbau eines Regulären Ausdruckes
 
