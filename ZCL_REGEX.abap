@@ -5,38 +5,46 @@ CLASS zcl_regex DEFINITION
 
   PUBLIC SECTION.
 
-    "! <p class="shorttext synchronized">Prüft ob String den Regex enthält</p>
-    "! @parameter iv_val      | String der Durchsucht werden soll
-    "! @parameter iv_regex    | Regex in JavaScript form
-    "! @parameter rv_contains | Bool - beinhaltet
+    "! <p class="shorttext synchronized">PrÃ¼ft ob String den Regex enthÃ¤lt</p>
     CLASS-METHODS match
       IMPORTING
         !iv_val            TYPE string
         !iv_regex          TYPE string
       RETURNING
-        VALUE(rv_contains) TYPE abap_bool .
+        VALUE(rv_contains) TYPE abap_bool
+      RAISING
+        cx_sy_regex_too_complex .
 
-    "! <p class="shorttext synchronized">Gibt die Matches des Regex zurück</p>
-    "! @parameter iv_val      | String der Durchsucht werden soll
-    "! @parameter iv_regex    | Regex in JavaScript form
-    "! @parameter rt_matches  | Tabelle mit Treffern auf die Suche
+    "! <p class="shorttext synchronized">Gibt die Matches des Regex zurÃ¼ck</p>
     CLASS-METHODS matches
       IMPORTING
         !iv_val           TYPE string
         !iv_regex         TYPE string
       RETURNING
-        VALUE(rt_matches) TYPE match_result_tab .
+        VALUE(rt_matches) TYPE match_result_tab
+      RAISING
+        cx_sy_regex_too_complex .
+
+    "! <p class="shorttext synchronized">Gibt die Matches des Regex als String zurÃ¼ck</p>
+    CLASS-METHODS matches_as_string
+      IMPORTING
+        !iv_val           TYPE string
+        !iv_regex         TYPE string
+      RETURNING
+        VALUE(rt_strings) TYPE stringtab
+      RAISING
+        cx_sy_regex_too_complex .
 
     "! <p class="shorttext synchronized">Splitted einen String an Regex auf</p>
-    "! @parameter iv_val      | String der Durchsucht werden soll
-    "! @parameter iv_regex    | Regex in JavaScript form
-    "! @parameter rt_split    | Beinhaltet die gesplitteten Werte
     CLASS-METHODS split
       IMPORTING
         !iv_val         TYPE string
         !iv_regex       TYPE string
       RETURNING
-        VALUE(rt_split) TYPE stringtab .
+        VALUE(rt_split) TYPE stringtab
+      RAISING
+        cx_sy_regex_too_complex .
+
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -50,7 +58,9 @@ CLASS zcl_regex DEFINITION
       IMPORTING
         !iv_regex    TYPE string
       RETURNING
-        VALUE(rv_ok) TYPE abap_bool .
+        VALUE(rv_ok) TYPE abap_bool
+      EXCEPTIONS
+        false_regex_fromat.
     "! Interne Nutzung
     CLASS-METHODS determine_regex_values
       IMPORTING
@@ -71,6 +81,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RV_OK                          TYPE        ABAP_BOOL
+* | [EXC!] FALSE_REGEX_FROMAT
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD check_regex.
 
@@ -78,7 +89,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
     IF sy-subrc = 0.
       rv_ok = abap_true.
     ELSE.
-      rv_ok = abap_false.
+      RAISE false_regex_fromat.
     ENDIF.
 
   ENDMETHOD.
@@ -118,7 +129,11 @@ CLASS ZCL_REGEX IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
-    SHIFT ev_regex RIGHT DELETING TRAILING c_slash.
+    FIND REGEX '.*\\\/$' IN ev_regex.
+    IF sy-subrc <> 0.
+      DATA(lv_offset) = strlen( ev_regex ) - 1.
+      ev_regex = ev_regex+0(lv_offset).
+    ENDIF.
     CONDENSE ev_regex NO-GAPS.
 
   ENDMETHOD.
@@ -130,6 +145,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * | [--->] IV_VAL                         TYPE        STRING
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RV_CONTAINS                    TYPE        ABAP_BOOL
+* | [!CX!] CX_SY_REGEX_TOO_COMPLEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD match.
 
@@ -174,6 +190,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * | [--->] IV_VAL                         TYPE        STRING
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RT_MATCHES                     TYPE        MATCH_RESULT_TAB
+* | [!CX!] CX_SY_REGEX_TOO_COMPLEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD matches.
 
@@ -225,11 +242,41 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_REGEX=>MATCHES_AS_STRING
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_VAL                         TYPE        STRING
+* | [--->] IV_REGEX                       TYPE        STRING
+* | [<-()] RT_STRINGS                     TYPE        STRINGTAB
+* | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD matches_as_string.
+
+    DATA: lt_matches TYPE match_result_tab
+        , lv_string  TYPE string
+        .
+
+    FIELD-SYMBOLS: <ls_match> TYPE match_result
+                 .
+
+    lt_matches = matches( iv_val   = iv_val
+                          iv_regex = iv_regex ).
+
+    LOOP AT lt_matches ASSIGNING <ls_match>.
+      CLEAR lv_string.
+      lv_string = iv_val+<ls_match>-offset(<ls_match>-length).
+      APPEND lv_string TO rt_strings.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Static Public Method ZCL_REGEX=>SPLIT
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_VAL                         TYPE        STRING
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RT_SPLIT                       TYPE        STRINGTAB
+* | [!CX!] CX_SY_REGEX_TOO_COMPLEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD split.
 
