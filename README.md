@@ -43,8 +43,14 @@ Methode, welche die Ergebnisse der Suche als Tabelle zurück gibt.
 zcl_regex=>matches( iv_val:string, iv_regex:string ) : rt_matches:match_result_tab
 ```
 
-## ZCL_REGEX=>SPLIT
-
+## ZCL_REGEX=>MATCHES_AS_STRING
+Methode welche die gefunden Strings als Tabelle zurückgibt.
 ```abap
+zcl_regex=>matches_as_string( iv_val:string, iv_regex:string ) : rt_strings:stringtab
+```
 
+## ZCL_REGEX=>SPLIT
+Methode, welche einen String an einem Regex splittet.
+```abap
+zcl_regex=>split( iv_val:string, iv_regex:string ) : rt_split:stringtab
 ```
