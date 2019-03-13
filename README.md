@@ -13,16 +13,20 @@ Der Regex-String, welcher in jede Methode der Klasse ZCL_REGEX gegeben wird, ist
 ## ZCL_REGEX=>MATCH
 
 ```abap
-zcl_regex=>matches( iv_val   = 'ABAP'
-                    iv_regex =  '/a/ig' ).
+IF abap_true = zcl_regex=>match( iv_val   = 'ABAP'
+                                 iv_regex = '/a/ig' ).
+  " Regex wurde gefunden
+ELSE.
+  " Regex wurde nicht gefunden
+ENDIF.
 ```
-Dieser Aufruf gibt ABAP_TRUE zurück.
+Dieser Aufruf gibt ```abap abap_true``` zurück.
 
 ```abap
-zcl_regex=>matches( iv_val   = 'ABAP'
-                    iv_regex =  '/a/g' ).
+zcl_regex=>match( iv_val   = 'ABAP'
+                  iv_regex = '/a/g' ).
 ```
-Dieser Aufruf gibt ABAP_FALSE zurück, da dieser Aufruf Casesensitiv ist.
+Dieser Aufruf gibt ```abap abap_false``` zurück, da dieser Aufruf Casesensitiv ist.
 
 ## ZCL_REGEX=>MATCHES
 
