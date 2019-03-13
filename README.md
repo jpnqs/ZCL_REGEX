@@ -1,4 +1,4 @@
-# ZCL_REGEX
+# Klasse ZCL_REGEX
 ABAP-Klasse zur objektorientierten Kapselung von Regulären Ausdrücken.
 
 ## Aufbau eines Regulären Ausdruckes
