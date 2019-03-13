@@ -42,6 +42,11 @@ Methode, welche die Ergebnisse der Suche als Tabelle zurück gibt.
 ```abap
 zcl_regex=>matches( iv_val:string, iv_regex:string ) : rt_matches:match_result_tab
 ```
+Mit dem Modifier g (Global) werden alle vorkommenden Stellen gematched und ausgegeben, wenn dieser Modifier nicht angegeben ist, dann wird nur das Erste zurückgegeben.
+```abap
+DATA(lt_matches) = zcl_regex=>matches( iv_val   = 'Hallo Welt!'
+                                       iv_regex = '/Welt/gi' ).
+```
 
 ## ZCL_REGEX=>MATCHES_AS_STRING
 Methode welche die gefunden Strings als Tabelle zurückgibt.
@@ -54,6 +59,8 @@ zcl_regex=>matches_as_string( iv_val:string, iv_regex:string ) : rt_strings:stri
 DATA(lt_matches) = zcl_regex=>matches_as_string( iv_val   = 'Hallo Welt!'
                                                  iv_regex = '/Welt/gi' ).
 ```
+Mit dem Modifier g (Global) werden alle vorkommenden Stellen gematched und ausgegeben, wenn dieser Modifier nicht angegeben ist, dann wird nur das Erste zurückgegeben.
+
 Ergebnis:
 ```json
 ["Welt"]
