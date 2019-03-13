@@ -11,6 +11,8 @@ Der Regex-String, welcher in jede Methode der Klasse ZCL_REGEX gegeben wird, ist
 * **g** : global (Suche findet global statt)  
 
 ABAP verwendet im Kernel die C++ Engine [Boost.Regex 5.1.1](https://www.boost.org/doc/libs/1_61_0/libs/regex/doc/html/index.html). Demnach ist mit ABAP Regex nur möglich, was diese Engine bereitstellt. Für weitere informationen über ABAP Regex klicken Sie [hier](https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenregular_expressions.htm).
+
+
 (Erfolgreich getestet in [SAP GUI Version 7.50](https://blogs.sap.com/2017/05/12/sap-gui-7.5-new-ui-for-sap-users/))
 ## ZCL_REGEX=>MATCH
 Methode zur Überprüfung, ob ein Regex in einem String gefunden wurde oder nicht.
