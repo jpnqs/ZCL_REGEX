@@ -39,10 +39,12 @@ Der Global Modifier ist für diese Methode irrelevant, da hier nur geschaut wird
 
 ## ZCL_REGEX=>MATCHES
 Methode, welche die Ergebnisse der Suche als Tabelle zurück gibt.
+### Signatur
 ```abap
 zcl_regex=>matches( iv_val:string, iv_regex:string ) : rt_matches:match_result_tab
 ```
 Mit dem Modifier g (Global) werden alle vorkommenden Stellen gematched und ausgegeben, wenn dieser Modifier nicht angegeben ist, dann wird nur das Erste zurückgegeben.
+### Beispiel
 ```abap
 DATA(lt_matches) = zcl_regex=>matches( iv_val   = 'Hallo Welt!'
                                        iv_regex = '/Welt/gi' ).
