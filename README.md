@@ -20,13 +20,13 @@ ELSE.
   " Regex wurde nicht gefunden
 ENDIF.
 ```
-Dieser Aufruf gibt ```abap abap_true``` zurück.
+Dieser Aufruf gibt ```abap_true``` zurück.
 
 ```abap
 zcl_regex=>match( iv_val   = 'ABAP'
                   iv_regex = '/a/g' ).
 ```
-Dieser Aufruf gibt ```abap abap_false``` zurück, da dieser Aufruf Casesensitiv ist.
+Dieser Aufruf gibt ```abap_false``` zurück, da dieser Aufruf Casesensitiv ist.
 
 ## ZCL_REGEX=>MATCHES
 
