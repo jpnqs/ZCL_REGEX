@@ -28,6 +28,8 @@ zcl_regex=>match( iv_val   = 'ABAP'
 ```
 Dieser Aufruf gibt ```abap_false``` zurück, da dieser Aufruf Casesensitiv ist.
 
+Der Global Modifier ist für diese Methode irrelevant, da hier nur geschaut wird, ob der Regex mindestens einmal gefunden wird.
+
 ## ZCL_REGEX=>MATCHES
 
 ```abap
