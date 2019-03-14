@@ -88,3 +88,18 @@ Ergebnis:
 ["Hallo", "Welt!"]
 ```
 Wenn als Modifier kein g (global) mitgegeben wird, dann wird der String nur am ersten auftreten des Regex gesplittet.
+
+## ZCL_REGEX=>REPLACE
+Methode, welche einen Regex durch einen anderen angegeben String ersetzen.
+### Signatur
+```abap
+zcl_regex=>replace( iv_val:string, iv_regex:string, iv_replace:string ) : rv_val:string
+```
+#### Beispiel
+```abap
+DATA(lv_result) = zcl_regex=>replace( iv_val     = 'ABAP'
+                                      iv_regex   = '/a/ig'
+                                      iv_replace = ':)' ).
+```
+Ergebnis
+```:)B:)P```
