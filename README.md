@@ -102,4 +102,6 @@ DATA(lv_result) = zcl_regex=>replace( iv_val     = 'ABAP'
                                       iv_replace = ':)' ).
 ```
 Ergebnis
-```:)B:)P```
+```
+:)B:)P
+```
