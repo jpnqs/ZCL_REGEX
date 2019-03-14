@@ -9,8 +9,8 @@ CLASS zcl_regex DEFINITION
     CLASS-METHODS convert_abap_regex
       IMPORTING
         !iv_abap_regex    TYPE string
-        !iv_global_search TYPE abap_bool
-        !iv_ignore_case   TYPE abap_bool
+        !iv_global_search TYPE abap_bool DEFAULT abap_false
+        !iv_ignore_case   TYPE abap_bool DEFAULT abap_false
       RETURNING
         VALUE(rv_regex)   TYPE string
       RAISING
@@ -121,8 +121,8 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * | Static Public Method ZCL_REGEX=>CONVERT_ABAP_REGEX
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_ABAP_REGEX                  TYPE        STRING
-* | [--->] IV_GLOBAL_SEARCH               TYPE        ABAP_BOOL
-* | [--->] IV_IGNORE_CASE                 TYPE        ABAP_BOOL
+* | [--->] IV_GLOBAL_SEARCH               TYPE        ABAP_BOOL (default =ABAP_FALSE)
+* | [--->] IV_IGNORE_CASE                 TYPE        ABAP_BOOL (default =ABAP_FALSE)
 * | [<-()] RV_REGEX                       TYPE        STRING
 * | [!CX!] CX_SY_REGEX_TOO_COMPLEX
 * | [!CX!] CX_SY_REGEX
