@@ -13,8 +13,8 @@ CLASS zcl_regex DEFINITION
       RETURNING
         VALUE(rv_contains) TYPE abap_bool
       RAISING
-        cx_sy_regex_too_complex .
-
+        cx_sy_regex_too_complex
+        cx_sy_regex .
     "! <p class="shorttext synchronized">Gibt die Matches des Regex zurück</p>
     CLASS-METHODS matches
       IMPORTING
@@ -23,8 +23,8 @@ CLASS zcl_regex DEFINITION
       RETURNING
         VALUE(rt_matches) TYPE match_result_tab
       RAISING
-        cx_sy_regex_too_complex .
-
+        cx_sy_regex_too_complex
+        cx_sy_regex .
     "! <p class="shorttext synchronized">Gibt die Matches des Regex als String zurück</p>
     CLASS-METHODS matches_as_string
       IMPORTING
@@ -33,8 +33,8 @@ CLASS zcl_regex DEFINITION
       RETURNING
         VALUE(rt_strings) TYPE stringtab
       RAISING
-        cx_sy_regex_too_complex .
-
+        cx_sy_regex_too_complex
+        cx_sy_regex .
     "! <p class="shorttext synchronized">Splitted einen String an Regex auf</p>
     CLASS-METHODS split
       IMPORTING
@@ -43,8 +43,19 @@ CLASS zcl_regex DEFINITION
       RETURNING
         VALUE(rt_split) TYPE stringtab
       RAISING
-        cx_sy_regex_too_complex .
-
+        cx_sy_regex_too_complex
+        cx_sy_regex .
+    "! <p class="shorttext synchronized">Ersetzt einen Regex durch den angeegebenen String</p>
+    CLASS-METHODS replace
+      IMPORTING
+        !iv_val       TYPE string
+        !iv_regex     TYPE string
+        !iv_replace   TYPE string
+      RETURNING
+        VALUE(rv_val) TYPE string
+      RAISING
+        cx_sy_regex_too_complex
+        cx_sy_regex .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -146,6 +157,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RV_CONTAINS                    TYPE        ABAP_BOOL
 * | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* | [!CX!] CX_SY_REGEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD match.
 
@@ -191,6 +203,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RT_MATCHES                     TYPE        MATCH_RESULT_TAB
 * | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* | [!CX!] CX_SY_REGEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD matches.
 
@@ -248,6 +261,7 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RT_STRINGS                     TYPE        STRINGTAB
 * | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* | [!CX!] CX_SY_REGEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD matches_as_string.
 
@@ -271,12 +285,70 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_REGEX=>REPLACE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_VAL                         TYPE        STRING
+* | [--->] IV_REGEX                       TYPE        STRING
+* | [--->] IV_REPLACE                     TYPE        STRING
+* | [<-()] RV_VAL                         TYPE        STRING
+* | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* | [!CX!] CX_SY_REGEX
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD replace.
+
+    DATA: lv_ignoring_case TYPE abap_bool
+        , lv_global        TYPE abap_bool
+        , lv_regex         TYPE string
+        .
+
+    rv_val = iv_val.
+
+    determine_regex_values(
+      EXPORTING
+        iv_regex       = iv_regex
+      IMPORTING
+        ev_regex       = lv_regex
+        ev_global      = lv_global
+        ev_ignore_case = lv_ignoring_case
+    ).
+
+    IF lv_ignoring_case = abap_true.
+      IF lv_global = abap_true.
+        REPLACE ALL OCCURRENCES OF REGEX lv_regex
+          IN rv_val
+          WITH iv_replace
+          IGNORING CASE.
+      ELSE.
+        REPLACE REGEX lv_regex
+         IN rv_val
+         WITH iv_replace
+         IGNORING CASE.
+      ENDIF.
+    ELSE.
+      IF lv_global = abap_true.
+        REPLACE ALL OCCURRENCES OF REGEX lv_regex
+          IN rv_val
+          WITH iv_replace
+          RESPECTING CASE.
+      ELSE.
+        REPLACE REGEX lv_regex
+          IN rv_val
+          WITH iv_replace
+          RESPECTING CASE.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Static Public Method ZCL_REGEX=>SPLIT
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_VAL                         TYPE        STRING
 * | [--->] IV_REGEX                       TYPE        STRING
 * | [<-()] RT_SPLIT                       TYPE        STRINGTAB
 * | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* | [!CX!] CX_SY_REGEX
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD split.
 
