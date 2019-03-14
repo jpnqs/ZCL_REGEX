@@ -5,6 +5,17 @@ CLASS zcl_regex DEFINITION
 
   PUBLIC SECTION.
 
+    "! <p class="shorttext synchronized">Konvertiert einen ABAP Regex in Passendes format</p>
+    CLASS-METHODS convert_abap_regex
+      IMPORTING
+        !iv_abap_regex    TYPE string
+        !iv_global_search TYPE abap_bool
+        !iv_ignore_case   TYPE abap_bool
+      RETURNING
+        VALUE(rv_regex)   TYPE string
+      RAISING
+        cx_sy_regex_too_complex
+        cx_sy_regex .
     "! <p class="shorttext synchronized">Prüft ob String den Regex enthält</p>
     CLASS-METHODS match
       IMPORTING
@@ -35,16 +46,6 @@ CLASS zcl_regex DEFINITION
       RAISING
         cx_sy_regex_too_complex
         cx_sy_regex .
-    "! <p class="shorttext synchronized">Splitted einen String an Regex auf</p>
-    CLASS-METHODS split
-      IMPORTING
-        !iv_val         TYPE string
-        !iv_regex       TYPE string
-      RETURNING
-        VALUE(rt_split) TYPE stringtab
-      RAISING
-        cx_sy_regex_too_complex
-        cx_sy_regex .
     "! <p class="shorttext synchronized">Ersetzt einen Regex durch den angeegebenen String</p>
     CLASS-METHODS replace
       IMPORTING
@@ -53,6 +54,16 @@ CLASS zcl_regex DEFINITION
         !iv_replace   TYPE string
       RETURNING
         VALUE(rv_val) TYPE string
+      RAISING
+        cx_sy_regex_too_complex
+        cx_sy_regex .
+    "! <p class="shorttext synchronized">Splitted einen String an Regex auf</p>
+    CLASS-METHODS split
+      IMPORTING
+        !iv_val         TYPE string
+        !iv_regex       TYPE string
+      RETURNING
+        VALUE(rt_split) TYPE stringtab
       RAISING
         cx_sy_regex_too_complex
         cx_sy_regex .
@@ -71,7 +82,7 @@ CLASS zcl_regex DEFINITION
       RETURNING
         VALUE(rv_ok) TYPE abap_bool
       EXCEPTIONS
-        false_regex_fromat.
+        false_regex_fromat .
     "! Interne Nutzung
     CLASS-METHODS determine_regex_values
       IMPORTING
@@ -101,6 +112,40 @@ CLASS ZCL_REGEX IMPLEMENTATION.
       rv_ok = abap_true.
     ELSE.
       RAISE false_regex_fromat.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_REGEX=>CONVERT_ABAP_REGEX
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ABAP_REGEX                  TYPE        STRING
+* | [--->] IV_GLOBAL_SEARCH               TYPE        ABAP_BOOL
+* | [--->] IV_IGNORE_CASE                 TYPE        ABAP_BOOL
+* | [<-()] RV_REGEX                       TYPE        STRING
+* | [!CX!] CX_SY_REGEX_TOO_COMPLEX
+* | [!CX!] CX_SY_REGEX
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD convert_abap_regex.
+    " Konvertiert einen Standard ABAP Regex
+    " in eine für diese Klasse verwendbare Form
+
+    " ABAP Regex testen
+    FIND REGEX iv_abap_regex IN space.
+
+    IF sy-subrc <> 0.
+      " Ok, nichts tun
+    ENDIF.
+
+    CONCATENATE c_slash iv_abap_regex c_slash INTO rv_regex.
+
+    IF iv_ignore_case = abap_true.
+      CONCATENATE rv_regex c_ignore_case INTO rv_regex.
+    ENDIF.
+
+    IF iv_global_search = abap_true.
+      CONCATENATE rv_regex c_global INTO rv_regex.
     ENDIF.
 
   ENDMETHOD.
