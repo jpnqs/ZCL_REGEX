@@ -435,52 +435,21 @@ CLASS ZCL_REGEX IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD split.
 
-    DATA: lv_val           TYPE string
-        , lv_ignoring_case TYPE abap_bool
-        , lv_global        TYPE abap_bool
-        , lv_regex         TYPE string
+    DATA: lv_val TYPE string
         .
 
     lv_val = iv_val.
 
     generate_new_split_val( lv_val ).
 
-    determine_regex_values(
+    lv_val = replace(
       EXPORTING
-        iv_regex       = iv_regex
-      IMPORTING
-        ev_regex       = lv_regex
-        ev_global      = lv_global
-        ev_ignore_case = lv_ignoring_case
+        iv_val     = lv_val
+        iv_regex   = iv_regex
+        iv_replace = s_split_val
     ).
 
-    IF lv_ignoring_case = abap_true.
-      IF lv_global = abap_true.
-        REPLACE ALL OCCURRENCES OF REGEX lv_regex
-          IN lv_val
-          WITH s_split_val
-          IGNORING CASE.
-      ELSE.
-        REPLACE REGEX lv_regex
-         IN lv_val
-         WITH s_split_val
-         IGNORING CASE.
-      ENDIF.
-    ELSE.
-      IF lv_global = abap_true.
-        REPLACE ALL OCCURRENCES OF REGEX lv_regex
-          IN lv_val
-          WITH s_split_val
-          RESPECTING CASE.
-      ELSE.
-        REPLACE REGEX lv_regex
-          IN lv_val
-          WITH s_split_val
-          RESPECTING CASE.
-      ENDIF.
-    ENDIF.
-
     SPLIT lv_val AT s_split_val INTO TABLE rt_split.
-
+    
   ENDMETHOD.
 ENDCLASS.
